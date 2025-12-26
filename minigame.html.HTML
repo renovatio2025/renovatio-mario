@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>슈퍼 마리오 파티 잼버리: 미니게임 도감</title>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: #f0f9ff;
+            background-image: radial-gradient(#e0f2fe 2px, transparent 2px);
+            background-size: 24px 24px;
+        }
+        .title-font {
+            font-family: 'Jua', sans-serif;
+        }
+        .card-hover:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+        .animate-pop {
+            animation: pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        @keyframes pop {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        /* Custom Scrollbar for categories */
+        .category-scroll::-webkit-scrollbar {
+            height: 6px;
+        }
+        .category-scroll::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .category-scroll::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect } = React;
+
+        // Data from the provided document
+        const categories = [
+            { id: 'all', name: '전체 보기', color: 'bg-gray-600', icon: '🌟' },
+            { id: '4vs', name: '4인 대전', color: 'bg-red-500', icon: '⚔️' },
+            { id: '1vs3', name: '1 vs 3', color: 'bg-blue-500', icon: '🛡️' },
+            { id: '2vs2', name: '2 vs 2', color: 'bg-green-500', icon: '🤝' },
+            { id: 'duel', name: '듀얼', color: 'bg-purple-500', icon: '🥊' },
+            { id: 'item', name: '아이템', color: 'bg-yellow-500', icon: '🍄' },
+            { id: 'challenge', name: '챌린지', color: 'bg-indigo-500', icon: '👑' },
+            { id: 'boss', name: '보스전', color: 'bg-rose-600', icon: '🐲' },
+            { id: 'koopa', name: '쿠파 챌린지', color: 'bg-orange-600', icon: '🔥' },
+            { id: 'rhythm', name: '리듬 쿠킹', color: 'bg-pink-500', icon: '🎵' },
+        ];
+
+        const minigames = [
+            // 4인 대전
+            { category: '4vs', name: '데인저러스 브리지', goal: '통나무와 무너지는 발판을 피해 골인 지점으로!', strategy: '초반은 통나무 주의, 후반은 이빨이 생긴 통나무와 무너지는 다리를 조심하세요.' },
+            { category: '4vs', name: '키노피오 서커스', goal: '공 탄 캐릭터 기억하고 퀴즈 맞추기', strategy: '없던 것을 고르는 문제 대비! 캐릭터와 공 종류를 꼭 기억해두세요.' },
+            { category: '4vs', name: '다 함께 찰칵', goal: '견본 사진과 똑같이 사진 찍기', strategy: '구도뿐만 아니라 줌(Zoom)으로 크기까지 맞춰야 고득점!' },
+            { category: '4vs', name: '찌릿찌릿 회전목마', goal: '장애물 피해 끝까지 살아남기', strategy: '점프로 크게 이동하세요. 초반에 미리 넓은 공간을 확보하는 것이 유리합니다.' },
+            { category: '4vs', name: '우주 깃발 레이스', goal: '달리면서 깃발 많이 터치하기', strategy: '깃발이 3개 뭉친 곳을 노리세요. 후반 힌트를 보고 동선을 짜야 합니다.' },
+            { category: '4vs', name: '피해라! 샌드위치', goal: '떨어지는 샌드위치 피하기', strategy: '그림자를 잘 보세요. 후반에는 가장 높은 곳에 있어야 갇히지 않습니다.' },
+            { category: '4vs', name: '선택! 블록 로드', goal: '블록 선택해서 길 연결하기', strategy: '남과 겹치면 못 얻어요. 눈치 싸움으로 나만의 길을 만드세요.' },
+            { category: '4vs', name: '라이트 웨이브 배틀', goal: '웨이브 공격 & 점프로 피하기', strategy: '상대 점프를 보고 웨이브를 쏘는 카운터 전략이 필승법!' },
+            { category: '4vs', name: '틀린 쿵쿵 찾기', goal: '다른 그림 하나 찾기', strategy: '사과 잎 방향, 바나나 개수 등 미세한 차이를 미리 외워두세요.' },
+            { category: '4vs', name: '후름의 바람 버티기', goal: '바람과 미끄러운 바닥 버티기', strategy: '바람 반대 방향으로 계속 움직이세요. 섬세한 스틱 조작 필수!' },
+            { category: '4vs', name: '짜자용 패닉', goal: '짜자용과 파이어바 피하기', strategy: '넓은 공간 확보가 생명. 다른 사람과 겹치지 않게 도망치세요.' },
+            { category: '4vs', name: '꽈당꽈당 도미노', goal: '버튼 연타로 도미노 만들기', strategy: '전략 필요 없음! 편한 자세로 무조건 빠르게 누르세요.' },
+            { category: '4vs', name: '자유 자유투!', goal: '점프 슛으로 점수 내기', strategy: '가운데 2점짜리 황금 골대를 노리세요. 점프 높이 조절이 핵심.' },
+            { category: '4vs', name: '도망쳐! 데굴데굴바위', goal: '바위 피해 도망치기', strategy: '1등 안 해도 됩니다. 생존이 목표! 아래로 이동하며 장애물만 피하세요.' },
+            { category: '4vs', name: '기울이기 골프', goal: '기울여서 공 넣기 (조이콘)', strategy: '벙커에 빠지면 위로 휙! 섬세하게 기울이세요.' },
+            { category: '4vs', name: '밝혀라! 일루미네이션', goal: '핸들 돌려 불 켜기 (조이콘)', strategy: '멈추지 않고 꾸준히 빠르게 돌리는 리듬을 찾으세요.' },
+            { category: '4vs', name: '힘을 모아 두드려라! DIY', goal: '망치로 못 박기 (조이콘)', strategy: '깊은 못은 살살, 덜 박힌 못은 쎄게! 힘 조절이 중요해요.' },
+            { category: '4vs', name: '뽀꾸뽀꾸와 징오징오', goal: '기울여서 분류하기 (조이콘)', strategy: '끝까지 포기 금지! 시간 끝나고 떨어지는 것도 점수입니다.' },
+            { category: '4vs', name: '전격 우주선', goal: '전기 피해 올라가기 (조이콘)', strategy: '천천히 가도 됩니다. 몸싸움에 밀리지 않게 안전 운전하세요.' },
+            { category: '4vs', name: '미니미니 트라이애슬론', goal: '3종 경기 레이스 (조이콘)', strategy: '마지막 뜀틀이 승부처! 정확한 타이밍에 점프하세요.' },
+            { category: '4vs', name: '파고 또 파고 터널 레이스', goal: '땅 파기 (조이콘)', strategy: '화면 동작에 맞춰 흔들어야 효율적. ZL/ZR 누르고 흔드세요!' },
+            { category: '4vs', name: '이 열쇠가 네 열쇠냐', goal: '맞는 열쇠 찾기', strategy: '남이 실패한 열쇠 기억하기! 운과 기억력 싸움입니다.' },
+            { category: '4vs', name: '아슬아슬 펭군', goal: '낭떠러지 끝에 멈추기', strategy: '키노피오 시범을 꼭 보세요! 배경의 구름이나 산을 멈추는 기준점으로 삼으세요.' },
+            { category: '4vs', name: '스케이트 코인 모으기', goal: '스케이트 타고 코인 획득', strategy: '눈덩이(레드코인)는 위험해요. 일반 코인을 꾸준히 모으는 게 안전!' },
+            { category: '4vs', name: '숲의 코인 시소', goal: '시소 타며 코인 획득', strategy: '균형 잡기가 핵심. 가끔 나오는 레드코인을 꼭 드세요.' },
+            { category: '4vs', name: '맨몸 잠수 마리오', goal: '해저 보물 옮기기', strategy: '호흡 게이지 확인! 바다 생물 패턴 보고 안전하게 이동하세요.' },
+            { category: '4vs', name: '플레이트 건너기', goal: '떨어지지 않고 코인 먹기', strategy: '생존보다 코인! 위험해도 코인 많은 길로 과감하게 가세요.' },
+            { category: '4vs', name: '알록달록 스탬프', goal: '내 색깔로 칠하기', strategy: '빈 곳보다 남의 색을 덮어쓰세요! 길게 눌러 멀리 점프!' },
+            { category: '4vs', name: '개미병 트램펄린', goal: '개미병 피해 살아남기', strategy: '방향 바뀔 때 오히려 개미병 뭉친 곳이 안전할 수도 있습니다.' },
+
+            // 1 vs 3
+            { category: '1vs3', name: '대결! 킬러 머신', goal: '1명은 공격, 3명은 생존', strategy: '1명팀: 뭉친 곳 노리기 / 3명팀: 뿔뿔이 흩어지세요.' },
+            { category: '1vs3', name: '서둘러라! 쿠키 찍어 내기', goal: '쿠키 많이 찍기', strategy: '1명팀: 3개 틀 숙련도가 중요 / 3명팀: 내 틀 하나만 집중!' },
+            { category: '1vs3', name: '뾰족뾰족 플레이트 배틀', goal: '가시 판 피하기', strategy: '1명팀: 가시가 위로 가게 뒤집기 / 3명팀: 그림자 보고 피하세요.' },
+            { category: '1vs3', name: '직감 두더지 잡기', goal: '숨은 1명 찾기', strategy: '1명팀: 무작위로 숨기 / 3명팀: 동시에 다른 곳 때려서 확률 높이기.' },
+            { category: '1vs3', name: '잘 노려라! 활 사격', goal: '화살 쏘기 vs 피하기', strategy: '1명팀: 중앙 고득점 노리며 기습 / 3명팀: 조준 방향 보고 반대로!' },
+            { category: '1vs3', name: '온 오프 데구르', goal: '공 떨어뜨리기 vs 피하기', strategy: '1명팀: 모았다가 한 번에 쏟기 / 3명팀: 공 움직임이 단순하니 침착하게.' },
+            { category: '1vs3', name: '클러셔 로봇을 피해라', goal: '로봇 공격 vs 도망', strategy: '1명팀: 구석으로 몰기 / 3명팀: 넓게 흩어져서 도망치세요.' },
+            { category: '1vs3', name: '철창으로 캐치', goal: '도망 vs 철창 가두기', strategy: '1명팀: 급커브로 교란 / 3명팀: 셋의 완벽한 호흡이 필수!' },
+            { category: '1vs3', name: '플레시의 코인 강', goal: '플레시 vs 제트스키', strategy: '1명팀: 3명을 밀어내기 / 3명팀: 흩어져서 코인 먹기.' },
+            { category: '1vs3', name: '캡슐 공장', goal: '크레인 잡기 vs 도망', strategy: '1명팀: 여러 명 번갈아 압박 / 3명팀: 그림자 안 닿는 곳으로 이동.' },
+            { category: '1vs3', name: '대결! 눈싸움', goal: '상대 팀 얼리기', strategy: '1명팀: 몽숭이 뒤에 숨어 버티기 / 3명팀: 1명만 잡으면 되니 집중 포화!' },
+            { category: '1vs3', name: '뿅망치로 코인 빼앗기', goal: '때리기 vs 도망', strategy: '1명팀: 한 놈만 팬다 전략 / 3명팀: 흩어져서 공격자 혼란시키기.' },
+
+            // 2 vs 2
+            { category: '2vs2', name: '위험한 스윙 레이스', goal: '교대로 바 잡고 이동', strategy: '파트너와 리듬 맞추기! 내가 놓아야 파트너가 잡습니다.' },
+            { category: '2vs2', name: '과일 컨베이어', goal: '과일 분류하기', strategy: '내가 못 넣는 과일은 빨리 중앙으로 넘겨주세요.' },
+            { category: '2vs2', name: '거대 스테이크 자르기', goal: '스테이크 반으로 자르기', strategy: '두 사람의 중간 지점이 칼질 위치입니다. 함께 움직이세요.' },
+            { category: '2vs2', name: '돗시 보트 레이스', goal: '보트 페달 밟기 (조이콘)', strategy: '회전할 땐 바깥쪽 사람이 더 빨리 밟아야 합니다.' },
+            { category: '2vs2', name: '휘적휘적 팔씨름', goal: '팔씨름 이기기 (조이콘)', strategy: 'ZL/ZR 누르고 파트너와 함께 격렬하게 흔드세요!' },
+            { category: '2vs2', name: '그림자 그림 겹치기', goal: '도형 겹쳐 모양 만들기', strategy: '파트너와 말하면서 맞춰야 합니다. 빠른 판단력 필수.' },
+            { category: '2vs2', name: '둘이서 카드 맞추기', goal: '같은 카드 찾기', strategy: '서로 다른 카드 뒤집으며 탐색, 찾으면 알려주세요.' },
+            { category: '2vs2', name: '폭탄병 도화선', goal: '도화선 불 끄기', strategy: '교차 지점 먼저 끄기! 구역 나눠서 끄면 빠릅니다.' },
+            { category: '2vs2', name: '서둘러라! 킬러 건너기', goal: '발판 만들고 건너기', strategy: '발판 쏘는 사람은 파트너가 뛰기 좋은 타이밍을 맞춰주세요.' },
+            { category: '2vs2', name: '가로세로 머신 레이스', goal: '가로/세로 담당 운전', strategy: '대각선 이동은 둘이 동시에! 코너링 호흡이 중요합니다.' },
+            { category: '2vs2', name: '코인 유적의 눈치 싸움', goal: '스위치 눌러 코인 먹기', strategy: '상대 심리 읽기. 폭탄병은 상대에게 보내버리세요.' },
+            { category: '2vs2', name: '밧줄로 코인 얻기', goal: '밧줄 던져 상자 당기기 (조이콘)', strategy: '큰 상자는 둘이 같이 당겨야 해요! 폭탄병 조심.' },
+
+            // 듀얼
+            { category: 'duel', name: '순간 낚시', goal: '먼저 낚시하기 (조이콘)', strategy: '찌가 완전히 잠길 때 낚아채세요. 반응 속도 승부!' },
+            { category: 'duel', name: '따귀 머신 대결', goal: '피하고 때리기', strategy: '상대 점프 타이밍을 읽고 공격하세요. 심리전입니다.' },
+            { category: 'duel', name: '얼바위 볼링', goal: '핀 많이 쓰러뜨리기', strategy: '단 한 번의 기회! 10초 동안 신중하게 중앙을 노리세요.' },
+            { category: 'duel', name: '곰실이리프트', goal: '곰실이 피해 올라가기', strategy: '부딪히면 손해 큽니다. 안전한 길로 빠르게.' },
+            { category: 'duel', name: '구슬 레이스', goal: '장애물 넘어 골인', strategy: '펀치로 상대를 밀어내 방해하는 게 효과적입니다.' },
+
+            // 아이템
+            { category: 'item', name: '아이템 구슬 굴리기', goal: '구슬 굴려 넣기 (조이콘)', strategy: '경사를 이용해 미세하게 조절하세요.' },
+            { category: 'item', name: '아이템 사다리 룰렛', goal: '사다리 타기 예측', strategy: '목표 한두 칸 앞에서 멈추는 느낌으로 누르세요.' },
+            { category: 'item', name: '아이템 컬링', goal: '스톤 굴리기', strategy: '힘 조절 필수. 목표보다 살짝 약하게 던져 미끄러지게.' },
+            { category: 'item', name: '아이템 페어 카드', goal: '카드 짝 맞추기', strategy: '처음 뒤집는 카드 위치를 무조건 외우세요.' },
+            { category: 'item', name: '아이템 메달 떨어뜨리기', goal: '메달 떨어뜨리기', strategy: '막대가 목표 직전에 왔을 때 버튼 누르기.' },
+
+            // 챌린지 (잼버리 프렌드)
+            { category: 'challenge', name: '마리오의 미니게임 메들리', goal: '3종 게임 합계 점수', strategy: '공 위의 곡예사에서 남을 떨어뜨리고 버티세요.' },
+            { category: 'challenge', name: '루이지와 수수께끼의 저택', goal: '퍼즐 풀고 탈출', strategy: '막히면 TV 조사! 루이지가 힌트를 줍니다.' },
+            { category: 'challenge', name: '피치의 휴일', goal: '3종 게임 합계 점수', strategy: '간식 고르기는 남과 안 겹치는 게 핵심 눈치 싸움.' },
+            { category: 'challenge', name: '데이지의 애슬레틱', goal: '메달 모으기', strategy: '3점짜리 레드메달을 우선적으로 노리세요.' },
+            { category: 'challenge', name: '와리오의 퀴즈 쇼', goal: '스피드 퀴즈', strategy: '정답보다 속도! 5, 10라운드는 점수 2배니 집중.' },
+            { category: 'challenge', name: '와루이지 핀볼', goal: '핀볼 점수 내기', strategy: 'WALUIGI 알파벳 다 켜면 보너스 대폭발!' },
+            { category: 'challenge', name: '요시의 산길 레이스', goal: '장애물 피하기 레이스', strategy: '과일 먹으면 대시! 속도 유지하며 장애물 피하세요.' },
+            { category: 'challenge', name: '로젤리나의 스노보드', goal: '보드 레이스 (조이콘)', strategy: '점프대에서 휘둘러 가속! 부스터 조각 모으세요.' },
+            { category: 'challenge', name: 'DK의 그루브 콩가', goal: '리듬 게임', strategy: '화면 신호와 소리에 집중해서 박자 맞추기.' },
+            { category: 'challenge', name: '쿠파주니어의 연속 챌린지', goal: '짧은 미션 연속 수행', strategy: '메이드 인 와리오 스타일. 5초 안에 상황 판단!' },
+
+            // 보스
+            { category: 'boss', name: '용돌이의 수상 등껍질', goal: '등껍질 던져 공격', strategy: '장애물 피해 등껍질 10개 이상 모아 한 방에 던지세요.' },
+            { category: 'boss', name: '거대딱끔 엉덩이 찍기', goal: '등에 엉덩이 찍기', strategy: '공격 끝난 직후가 기회! 가시 조심하며 접근하세요.' },
+            { category: 'boss', name: '거대뚜의 대포 배틀', goal: '대포 쏘기 & 요격', strategy: '날아오는 스패너는 협력해서 쏴야 합니다.' },
+            { category: 'boss', name: '케이케이왕 진격 퍼즐', goal: '회로 연결해 공격', strategy: '도착점부터 거꾸로 계산하면 빠릅니다.' },
+            { category: 'boss', name: '쿠파의 제트 어택', goal: '힘 모아 몸통 박치기', strategy: '4단계 고집 말고 안전하게 2~3단계로 여러 번 공격하세요.' },
+
+            // 쿠파 챌린지 (애슬론/버스터즈)
+            { category: 'koopa', name: '두드려라! 메카쪼르뚜', goal: '해머로 두더지 잡기', strategy: '황금 쪼르뚜 집중 타격! 폭탄병 낚시 조심.' },
+            { category: 'koopa', name: '블록 크래시', goal: '블록 부수기', strategy: '관통하는 빨간 등껍질은 절대 놓치지 마세요.' },
+            { category: 'koopa', name: '갓 구워 낸! 고소한 빵집', goal: '빵 꺼내기', strategy: '빵이 튀어 오르는 순간 포착! 비싼 빵은 오래 걸려요.' },
+            { category: 'koopa', name: '모래 가봉 유적', goal: '가시 피해 코인 획득', strategy: '거대 롤러 사이 틈으로 회피. 스타 쓰면 싹쓸이 기회!' },
+            { category: 'koopa', name: '떨어뜨려라! 인형!', goal: '인형 밀어 떨어뜨리기', strategy: '손가락 눈금 보고 조준. 한 번에 많이 밀어내세요.' },
+            { category: 'koopa', name: '사과 주스를 만들자', goal: '협력해서 주스 만들기', strategy: '병에 담기 팀이 눈금 잘 맞춰야 전체가 빨라집니다.' },
+            { category: 'koopa', name: '릴레이 토스 스파이크', goal: '배구 릴레이', strategy: '금빛 공은 높게 튀니 집중! S랭크 도전!' },
+            { category: 'koopa', name: '대포 빙고', goal: '빙고판 맞추기', strategy: '배가 움직이니 예측 사격 필수. 금빛 패널 노리세요.' },
+            { category: 'koopa', name: '문을 지켜라!', goal: '폭탄병 던져 버리기', strategy: '잡으면 자동 조준됨. 8명이 구역 나눠서 방어하세요.' },
+            { category: 'koopa', name: '멍멍이 목욕 시간', goal: '파이프 수리 & 씻기기', strategy: '수리조 7명이 빨리 막아야 호스 물이 콸콸 나옵니다.' },
+
+            // 리듬 쿠킹
+            { category: 'rhythm', name: '싹둑싹둑 수프', goal: '박자 맞춰 야채 썰기', strategy: '판정이 엄격해요. 소리와 진동에 집중!' },
+            { category: 'rhythm', name: '반짝반짝 과일 파르페', goal: '과일 받아치기', strategy: '한 바퀴 돈 펭귄은 공이 빠릅니다. 진동으로 박자 예측.' },
+            { category: 'rhythm', name: '달그락달그락 휘핑크림', goal: '크림 휘젓기', strategy: '크림이 그릇에 닿는 순간 원을 그리거나 흔드세요.' },
+            { category: 'rhythm', name: '착착 버터', goal: '버터 뜨고 바르기', strategy: '뜨고-바르고 2박자! 뜨기 실패하면 점수 깎여요.' },
+            { category: 'rhythm', name: '따끈따끈 팬케이크', goal: '팬케이크 뒤집기', strategy: '반죽 위 원이 사라진 직후가 타이밍입니다.' },
+            { category: 'rhythm', name: '휙휙 햄버거', goal: '재료 던져 쌓기', strategy: '갑자기 빨라지거나 반대 방향 낚시에 주의하세요.' },
+            { category: 'rhythm', name: '꾹꾹 샌드위치', goal: '타이밍 맞춰 빵 밀기', strategy: '재료 4개가 일직선 될 때! 초록 재료 위치 잘 보세요.' },
+            { category: 'rhythm', name: '따라 할래 포즈 카레', goal: '포즈 따라하기', strategy: '와루이지 동작 끝난 직후 내 차례에 흔드세요.' },
+            { category: 'rhythm', name: '쑥쑥 바비큐', goal: '재료 꼬치에 꽂기', strategy: '재료가 눈앞에 왔을 때 찌르기! 눈으로 보고 반응하세요.' },
+        ];
+
+        function App() {
+            const [activeCategory, setActiveCategory] = useState('all');
+            const [searchTerm, setSearchTerm] = useState('');
+            const [filteredGames, setFilteredGames] = useState(minigames);
+
+            useEffect(() => {
+                const results = minigames.filter(game => {
+                    const matchesCategory = activeCategory === 'all' || game.category === activeCategory;
+                    const matchesSearch = game.name.includes(searchTerm) || game.goal.includes(searchTerm);
+                    return matchesCategory && matchesSearch;
+                });
+                setFilteredGames(results);
+            }, [activeCategory, searchTerm]);
+
+            return (
+                <div className="min-h-screen pb-12">
+                    {/* Hero Section */}
+                    <header className="bg-gradient-to-r from-red-500 via-yellow-400 to-blue-500 p-6 md:p-10 shadow-lg mb-8">
+                        <div className="max-w-6xl mx-auto text-center text-white">
+                            <h1 className="text-3xl md:text-5xl title-font font-bold mb-4 drop-shadow-md">
+                                🍄 마리오 파티 잼버리 미니게임 도감 ⭐
+                            </h1>
+                            <p className="text-lg md:text-xl opacity-90 font-medium">
+                                박사님이 알려주는 승리의 비법! 총 {minigames.length}개의 게임이 있어요.
+                            </p>
+                        </div>
+                    </header>
+
+                    <div className="max-w-6xl mx-auto px-4">
+                        {/* Search Bar */}
+                        <div className="relative mb-8 max-w-2xl mx-auto">
+                            <input
+                                type="text"
+                                placeholder="게임 이름이나 목표를 검색해보세요! (예: 샌드위치, 낚시)"
+                                className="w-full p-4 pl-12 rounded-full border-4 border-yellow-400 shadow-lg text-lg focus:outline-none focus:border-red-500 transition-colors"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                            />
+                            <span className="absolute left-4 top-1/2 transform -translate-y-1/2 text-2xl">🔍</span>
+                        </div>
+
+                        {/* Category Filters */}
+                        <div className="flex gap-3 overflow-x-auto pb-4 mb-6 category-scroll px-2">
+                            {categories.map(cat => (
+                                <button
+                                    key={cat.id}
+                                    onClick={() => setActiveCategory(cat.id)}
+                                    className={`
+                                        flex items-center gap-2 px-5 py-3 rounded-2xl font-bold whitespace-nowrap transition-all duration-200 shadow-md border-b-4 border-black/20
+                                        ${activeCategory === cat.id 
+                                            ? `${cat.color} text-white scale-105 border-transparent ring-4 ring-offset-2 ring-${cat.color.split('-')[1]}-300` 
+                                            : 'bg-white text-gray-600 hover:bg-gray-50'}
+                                    `}
+                                >
+                                    <span>{cat.icon}</span>
+                                    {cat.name}
+                                </button>
+                            ))}
+                        </div>
+
+                        {/* Games Grid */}
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            {filteredGames.length > 0 ? (
+                                filteredGames.map((game, index) => (
+                                    <GameCard key={index} game={game} categoryColor={categories.find(c => c.id === game.category)?.color} />
+                                ))
+                            ) : (
+                                <div className="col-span-full text-center py-20 text-gray-500 text-xl font-bold">
+                                    🤔 그런 게임은 못 찾겠어요... 다른 단어로 검색해볼까요?
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <footer className="text-center mt-20 text-gray-400 text-sm">
+                        <p>Super Mario Party Jamboree Guide by Dr. TOFT</p>
+                    </footer>
+                </div>
+            );
+        }
+
+        function GameCard({ game, categoryColor }) {
+            const [isExpanded, setIsExpanded] = useState(false);
+
+            return (
+                <div 
+                    className="bg-white rounded-3xl overflow-hidden shadow-lg border-2 border-gray-100 card-hover flex flex-col h-full animate-pop cursor-pointer transition-all"
+                    onClick={() => setIsExpanded(!isExpanded)}
+                >
+                    <div className={`${categoryColor} h-3 w-full`}></div>
+                    <div className="p-6 flex-1 flex flex-col">
+                        <div className="flex items-start justify-between mb-3">
+                            <span className={`text-xs font-bold text-white px-2 py-1 rounded-full ${categoryColor}`}>
+                                {categories.find(c => c.id === game.category)?.name}
+                            </span>
+                            {game.goal.includes('조이콘') && <span className="text-xl" title="조이콘 필수">🎮</span>}
+                        </div>
+                        
+                        <h3 className="text-xl font-bold text-gray-800 mb-2 title-font leading-tight">{game.name}</h3>
+                        <p className="text-gray-600 text-sm mb-4 bg-gray-50 p-3 rounded-xl border border-gray-100">
+                            🎯 {game.goal}
+                        </p>
+
+                        <div className={`mt-auto transition-all duration-300 overflow-hidden ${isExpanded ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0'}`}>
+                            <div className="bg-yellow-50 p-4 rounded-xl border-2 border-yellow-200 text-sm text-gray-700">
+                                <div className="font-bold text-yellow-800 mb-1 flex items-center gap-1">
+                                    💡 박사님의 비법 노트
+                                </div>
+                                {game.strategy}
+                            </div>
+                        </div>
+
+                        {!isExpanded && (
+                            <div className="mt-auto text-center pt-2 text-gray-400 text-sm font-bold flex items-center justify-center gap-1 animate-pulse">
+                                <span>공략 보기</span>
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
+                            </div>
+                        )}
+                        {isExpanded && (
+                             <div className="mt-2 text-center text-gray-300 text-sm font-bold flex items-center justify-center gap-1">
+                                <span>접기</span>
+                                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 15l7-7 7 7"></path></svg>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>

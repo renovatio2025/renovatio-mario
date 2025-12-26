@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>슈퍼 마리오 파티 잼버리 가이드</title>
+    <!-- 폰트 설정: 귀여운 'Jua'체와 가독성 좋은 'Noto Sans' -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&family=Noto+Sans+KR:wght@400;700;900&display=swap" rel="stylesheet">
+    <!-- 아이콘 사용을 위한 FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* 1. 디자인 기본 변수 (마리오 테마 색상) */
+        :root {
+            --primary-red: #E60012;      /* 마리오 레드 */
+            --mario-blue: #0096C8;       /* 마리오 블루 */
+            --coin-yellow: #FFD100;      /* 코인 옐로우 */
+            --luigi-green: #26C748;      /* 루이지 그린 */
+            --bg-color: #FFF9E5;         /* 배경색 */
+            --card-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background-color: var(--bg-color);
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden; /* 가로 스크롤 방지 */
+        }
+
+        /* 제목 폰트 적용 */
+        h1, h2, h3, h4, .btn {
+            font-family: 'Jua', sans-serif;
+        }
+
+        .highlight {
+            color: var(--primary-red);
+        }
+
+        /* 메인 컨테이너 */
+        .web-container {
+            max-width: 800px; /* 모바일/태블릿 보기 좋은 너비 */
+            margin: 0 auto;
+            background: #fff;
+            min-height: 100vh;
+            box-shadow: 0 0 50px rgba(0,0,0,0.05);
+        }
+
+        /* 헤더 스타일 */
+        header {
+            background: var(--primary-red);
+            color: white;
+            padding: 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* 히어로 섹션 (상단 이미지 영역) */
+        .hero {
+            position: relative;
+            height: 300px;
+            background: #222;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: white;
+            overflow: hidden;
+        }
+        
+        /* 배경 패턴 (이미지 없을 때 대비) */
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(45deg, var(--primary-red), var(--mario-blue));
+            opacity: 0.8;
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            padding: 20px;
+        }
+
+        .hero h1 {
+            font-size: 42px;
+            text-shadow: 3px 3px 0px rgba(0,0,0,0.3);
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            font-size: 18px;
+            background: rgba(0,0,0,0.3);
+            padding: 8px 20px;
+            border-radius: 50px;
+            display: inline-block;
+        }
+
+        /* 네비게이션 탭 */
+        .nav-tabs {
+            display: flex;
+            background: white;
+            padding: 15px;
+            gap: 10px;
+            overflow-x: auto; /* 가로 스크롤 가능 */
+            border-bottom: 1px solid #eee;
+            position: sticky;
+            top: 70px; /* 헤더 높이만큼 띄움 */
+            z-index: 90;
+            scrollbar-width: none; /* 스크롤바 숨김 */
+        }
+
+        .nav-btn {
+            background: #f0f0f0;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 16px;
+            cursor: pointer;
+            white-space: nowrap;
+            font-family: 'Jua', sans-serif;
+            color: #666;
+            transition: 0.3s;
+        }
+
+        .nav-btn:hover, .nav-btn:focus {
+            background: var(--mario-blue);
+            color: white;
+            outline: none;
+        }
+
+        /* 섹션 공통 스타일 */
+        .section {
+            padding: 40px 20px;
+            border-bottom: 10px solid var(--bg-color);
+        }
+
+        .section-title {
+            font-size: 28px;
+            color: var(--primary-red);
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title::before {
+            content: '';
+            width: 8px;
+            height: 28px;
+            background: var(--coin-yellow);
+            border-radius: 4px;
+        }
+
+        /* 카드 그리드 스타일 (칸 종류) */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: var(--card-shadow);
+            border: 2px solid #f0f0f0;
+            transition: 0.3s;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            border-color: var(--mario-blue);
+        }
+
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 15px;
+            color: white;
+            font-weight: bold;
+        }
+
+        .card h3 { margin-bottom: 10px; font-size: 20px; }
+        .card p { font-size: 15px; color: #666; margin-bottom: 10px; }
+        
+        .tag {
+            background: #eee;
+            padding: 4px 8px;
+            border-radius: 6px;
+            font-size: 12px;
+            color: #555;
+            font-weight: bold;
+        }
+
+        /* 카드별 색상 */
+        .card.plus .card-icon { background: var(--mario-blue); }
+        .card.vs .card-icon { background: var(--coin-yellow); color: #333; }
+        .card.lucky .card-icon { background: var(--luigi-green); }
+        .card.bowser { border-color: #555; }
+        .card.bowser .card-icon { background: var(--primary-red); }
+
+        /* 특수 장소 리스트 스타일 */
+        .location-item {
+            display: flex;
+            align-items: center;
+            background: white;
+            padding: 20px;
+            border-radius: 16px;
+            border: 2px solid #eee;
+            margin-bottom: 15px;
+            gap: 15px;
+        }
+        
+        .loc-icon {
+            font-size: 24px;
+            color: var(--primary-red);
+            background: #fff0f0;
+            padding: 12px;
+            border-radius: 12px;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .loc-info h4 { margin-bottom: 5px; font-size: 18px; }
+        .loc-tip { font-size: 13px; color: var(--mario-blue); font-weight: bold; }
+
+        /* 잼버리 프렌드 스타일 */
+        .buddy-concept {
+            background: linear-gradient(135deg, #FF9A9E 0%, #FECFEF 100%);
+            padding: 25px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .buddy-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .buddy-box {
+            background: rgba(255,255,255,0.9);
+            padding: 15px;
+            border-radius: 12px;
+        }
+
+        .buddy-box h4 { margin-bottom: 5px; }
+
+        /* 챔피언십 표 스타일 */
+        .rule-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid #ddd;
+        }
+
+        .rule-table th, .rule-table td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+            font-size: 14px;
+        }
+
+        .rule-table th {
+            background: var(--mario-blue);
+            color: white;
+            font-family: 'Jua', sans-serif;
+        }
+
+        .rule-table td:first-child {
+            background: #f9f9f9;
+            font-weight: bold;
+            width: 25%;
+        }
+
+        /* 하단 푸터 */
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #888;
+            font-size: 13px;
+            background: #f5f5f5;
+        }
+
+        /* 모바일 최적화 */
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 32px; }
+            .location-item { flex-direction: column; text-align: center; }
+            .grid-container { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="web-container">
+    <header>
+        <div class="logo">
+            <i class="fa-solid fa-gamepad"></i> 잼버리 가이드
+        </div>
+        <div style="font-family:'Jua'; font-size:14px;">For Kids</div>
+    </header>
+
+    <!-- 상단 히어로 영역 -->
+    <div class="hero">
+        <div class="hero-content">
+            <h1>슈퍼 마리오 파티<br>잼버리 대백과</h1>
+            <p>이것만 알면 나도 파티 고수!</p>
+        </div>
+    </div>
+
+    <!-- 메뉴 탭 -->
+    <nav class="nav-tabs">
+        <button class="nav-btn" onclick="document.getElementById('intro').scrollIntoView({behavior: 'smooth'})">게임 목표</button>
+        <button class="nav-btn" onclick="document.getElementById('spaces').scrollIntoView({behavior: 'smooth'})">칸 종류</button>
+        <button class="nav-btn" onclick="document.getElementById('locations').scrollIntoView({behavior: 'smooth'})">특수 장소</button>
+        <button class="nav-btn" onclick="document.getElementById('buddy').scrollIntoView({behavior: 'smooth'})">잼버리 프렌드</button>
+        <button class="nav-btn" onclick="document.getElementById('rules').scrollIntoView({behavior: 'smooth'})">챔피언십</button>
+    </nav>
+
+    <!-- 1. 게임 목표 -->
+    <section id="intro" class="section">
+        <h2 class="section-title">⭐ 게임의 목표</h2>
+        <div style="background: #FFF8E1; padding: 20px; border-radius: 16px; border-left: 5px solid var(--coin-yellow);">
+            <p style="font-size: 18px; font-weight: 700;">
+                주사위를 굴려 보드 맵을 탐험하고, <br>
+                <span class="highlight">코인(Coin)</span>을 모아 <span style="color:var(--mario-blue);">스타(Star)</span>를 가장 많이 모으세요!
+            </p>
+        </div>
+    </section>
+
+    <!-- 2. 칸 종류 -->
+    <section id="spaces" class="section">
+        <h2 class="section-title">🎲 칸 종류 알아보기</h2>
+        <div class="grid-container">
+            <!-- 플러스 칸 -->
+            <div class="card plus">
+                <div class="card-icon">+</div>
+                <h3>플러스 칸</h3>
+                <p>멈추면 <strong>3코인</strong> 획득!<br>마지막 5턴엔 6코인!</p>
+                <span class="tag">#기본 #코인모으기</span>
+            </div>
+
+            <!-- VS 칸 -->
+            <div class="card vs">
+                <div class="card-icon">VS</div>
+                <h3>VS 칸</h3>
+                <p>모두의 코인을 걸고<br><strong>배틀 미니게임</strong> 한판!</p>
+                <span class="tag">#역전기회 #한판승부</span>
+            </div>
+
+            <!-- 럭키 칸 -->
+            <div class="card lucky">
+                <div class="card-icon"><i class="fa-solid fa-clover"></i></div>
+                <h3>럭키 칸</h3>
+                <p>아이템이나 코인 등<br><strong>좋은 선물</strong>을 받아요.</p>
+                <span class="tag">#행운 #필수</span>
+            </div>
+
+            <!-- 쿠파 칸 -->
+            <div class="card bowser">
+                <div class="card-icon"><i class="fa-solid fa-skull"></i></div>
+                <h3>쿠파 칸</h3>
+                <p>코인이나 스타를 뺏겨요.<br>무조건 피하세요!</p>
+                <span class="tag">#위험 #접근금지</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. 특수 장소 -->
+    <section id="locations" class="section">
+        <h2 class="section-title">🏰 놓치면 안 될 특수 장소</h2>
+        <div class="location-list">
+            <div class="location-item">
+                <div class="loc-icon"><i class="fa-solid fa-star"></i></div>
+                <div class="loc-info">
+                    <h4>스타 교환소</h4>
+                    <p>20코인으로 스타 1개를 살 수 있어요.</p>
+                    <p class="loc-tip">💡 팁: 누군가 사면 위치가 바뀌어요!</p>
+                </div>
+            </div>
+            <div class="location-item">
+                <div class="loc-icon"><i class="fa-solid fa-shop"></i></div>
+                <div class="loc-info">
+                    <h4>아이템 숍 (엉금엉금/마귀)</h4>
+                    <p>주사위나 방해 아이템을 사세요.</p>
+                    <p class="loc-tip">💡 팁: 마지막 턴에는 문을 닫아요.</p>
+                </div>
+            </div>
+            <div class="location-item">
+                <div class="loc-icon"><i class="fa-solid fa-ghost"></i></div>
+                <div class="loc-info">
+                    <h4>부끄부끄</h4>
+                    <p>상대의 코인이나 스타를 훔쳐요!</p>
+                    <p class="loc-tip">💡 팁: 50코인으로 스타 강탈 가능!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. 잼버리 프렌드 -->
+    <section id="buddy" class="section">
+        <h2 class="section-title">🤝 잼버리 프렌드</h2>
+        <div class="buddy-concept">
+            <h3>"모든 게 2배가 되는 친구들"</h3>
+            <p>미니게임 1등 하면 3턴 동안 내 동료!</p>
+            <div class="buddy-grid">
+                <div class="buddy-box">
+                    <h4 style="color:var(--mario-blue)"><i class="fa-regular fa-thumbs-up"></i> 장점 2배</h4>
+                    <p>스타 2개 구매!<br>아이템 2개 구매!</p>
+                </div>
+                <div class="buddy-box">
+                    <h4 style="color:var(--primary-red)"><i class="fa-regular fa-thumbs-down"></i> 단점 2배</h4>
+                    <p>쿠파 벌칙 2배...<br>비용도 2배...</p>
+                </div>
+            </div>
+        </div>
+        <div style="background:#f9f9f9; padding:20px; border-radius:16px;">
+            <h4 style="margin-bottom:10px;">추천 프렌드 능력</h4>
+            <ul style="list-style:none; padding-left:5px;">
+                <li style="margin-bottom:8px;">💖 <strong>피치:</strong> 스타 반값 (10코인)</li>
+                <li style="margin-bottom:8px;">🌼 <strong>데이지:</strong> 아이템 반값</li>
+                <li style="margin-bottom:8px;">🔴 <strong>마리오:</strong> 주사위 숫자 추가 이동</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- 5. 챔피언십 규칙 -->
+    <section id="rules" class="section">
+        <h2 class="section-title">🏆 챔피언십 규칙</h2>
+        <p style="margin-bottom:15px; color:#666;">운을 빼고 실력으로만 승부하는 고수 규칙!</p>
+        <table class="rule-table">
+            <thead>
+                <tr>
+                    <th>구분</th>
+                    <th>일반 파티</th>
+                    <th style="background:#D93025;">챔피언십</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>운 요소</td>
+                    <td>많음 (역전 가능)</td>
+                    <td>적음 (실력 중심)</td>
+                </tr>
+                <tr>
+                    <td>스타 위치</td>
+                    <td>랜덤</td>
+                    <td>미리 표시됨</td>
+                </tr>
+                <tr>
+                    <td>상점 재고</td>
+                    <td>무제한</td>
+                    <td>2개 한정 (선착순)</td>
+                </tr>
+                 <tr>
+                    <td>쿠파 칸</td>
+                    <td>랜덤 벌칙</td>
+                    <td style="color:#D93025; font-weight:bold;">무조건 스타 뺏김</td>
+                </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <footer>
+        <p>즐거운 파티 되세요! 🎉</p>
+        <p>Super Mario Party Jamboree Fan Guide</p>
+    </footer>
+</div>
+
+</body>
+</html>
+```

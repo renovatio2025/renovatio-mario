@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>슈퍼 마리오 파티 잼버리: 보드 맵 대백과</title>
+    <style>
+        :root {
+            --mario-red: #E60012;
+            --luigi-green: #43B047;
+            --peach-pink: #FFB6C1;
+            --yoshi-green: #8EDA02;
+            --toad-blue: #009BE0;
+            --bowser-dark: #333333;
+            --star-yellow: #FFD700;
+        }
+        
+        body {
+            font-family: 'Jua', 'Malgun Gothic', sans-serif;
+            background-color: #FFF9E6;
+            margin: 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* 헤더 디자인 */
+        header {
+            background: linear-gradient(135deg, var(--mario-red), #FF5555);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            border-bottom: 5px solid white;
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 0px rgba(0,0,0,0.3);
+        }
+
+        header p {
+            font-size: 1.2em;
+            margin-top: 10px;
+            opacity: 0.9;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* 난이도 섹션 구분 */
+        .section-title {
+            text-align: center;
+            font-size: 1.8em;
+            color: var(--mario-red);
+            margin: 40px 0 20px;
+            background: white;
+            display: inline-block;
+            padding: 10px 30px;
+            border-radius: 50px;
+            border: 3px solid var(--mario-red);
+            font-weight: bold;
+            box-shadow: 0 4px 0 rgba(0,0,0,0.1);
+        }
+
+        .section-center {
+            text-align: center;
+        }
+
+        /* 카드 디자인 */
+        .map-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            border-left: 10px solid var(--luigi-green);
+            transition: transform 0.3s;
+        }
+
+        .map-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .map-card.hard { border-left-color: var(--bowser-dark); }
+        .map-card.normal { border-left-color: var(--toad-blue); }
+
+        .map-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px dashed #eee;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+
+        .map-title {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .difficulty {
+            color: var(--star-yellow);
+            font-size: 1.2em;
+            text-shadow: 1px 1px 0 #999;
+        }
+
+        .tag-container {
+            margin-bottom: 15px;
+        }
+
+        .tag {
+            display: inline-block;
+            background-color: #f0f0f0;
+            color: #555;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            margin-right: 5px;
+            font-weight: bold;
+        }
+
+        .desc-box {
+            background-color: #F9F9F9;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 15px;
+        }
+
+        .key-rule {
+            color: var(--mario-red);
+            font-weight: bold;
+        }
+
+        .item-box {
+            background-color: #E8F4FF;
+            border: 1px solid #B6E0FF;
+            padding: 15px;
+            border-radius: 10px;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .item-icon {
+            font-size: 2em;
+            margin-right: 15px;
+        }
+
+        .dr-tip {
+            background-color: #FFF0F0;
+            border: 2px solid var(--peach-pink);
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+            position: relative;
+        }
+
+        .dr-tip::before {
+            content: "💡 박사님의 꿀팁";
+            position: absolute;
+            top: -12px;
+            left: 20px;
+            background: white;
+            padding: 0 10px;
+            font-weight: bold;
+            color: var(--mario-red);
+        }
+
+        /* 테이블 */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+
+        th {
+            background-color: var(--mario-red);
+            color: white;
+            padding: 12px;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+            text-align: center;
+        }
+
+        footer {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 0.9em;
+        }
+
+        @media (max-width: 600px) {
+            .map-header { flex-direction: column; align-items: flex-start; }
+            .difficulty { margin-top: 5px; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>🍄 슈퍼 마리오 파티 잼버리</h1>
+        <p>우리 가족에게 딱 맞는 보드 맵은 어디일까요?</p>
+    </header>
+
+    <div class="container">
+        
+        <div class="section-center">
+            <h2 class="section-title">🐣 초보자 추천 (난이도 ★ 1개)</h2>
+        </div>
+
+        <div class="map-card">
+            <div class="map-header">
+                <div class="map-title">1. 거대 꽃충이와 과자의 숲</div>
+                <div class="difficulty">★☆☆☆☆</div>
+            </div>
+            <div class="tag-container">
+                <span class="tag">#초보자추천</span>
+                <span class="tag">#길바꾸기</span>
+                <span class="tag">#입문용</span>
+            </div>
+            <div class="desc-box">
+                <p>잠자는 <span class="key-rule">거대 꽃충이</span>를 깨워서 길을 바꾸는 맵이에요! 마리오 파티를 처음 하는 친구들에게 가장 좋아요.</p>
+                <ul>
+                    <li><strong>주의!</strong> 꽃충이가 화나면 길이 위험해져요!</li>
+                    <li><strong>뻐끔플라워:</strong> 멈출 때마다 코인을 뺏어가니 조심하세요.</li>
+                </ul>
+            </div>
+            <div class="item-box">
+                <div class="item-icon">🔔</div>
+                <div>
+                    <strong>추천 아이템: 꽃충이 벨</strong><br>
+                    사용하면 꽃충이를 깨워서 길을 바꿀 수 있어요. 친구가 별을 못 먹게 방해할 때 쓰세요!
+                </div>
+            </div>
+        </div>
+
+        <div class="map-card">
+            <div class="map-header">
+                <div class="map-title">2. 마리오의 레인보우 캐슬</div>
+                <div class="difficulty">★☆☆☆☆</div>
+            </div>
+            <div class="tag-container">
+                <span class="tag">#천국과지옥</span>
+                <span class="tag">#타이밍싸움</span>
+            </div>
+            <div class="desc-box">
+                <p>구름 위 성 꼭대기에 누가 있을까요? 별을 주는 <strong>키노피오</strong>? 아니면 가짜 별을 강매하는 <strong>가짜 쿠파</strong>?</p>
+                <ul>
+                    <li>누군가 도착할 때마다 주인이 바뀌어요!</li>
+                    <li>가짜 쿠파를 만나면 코인을 몽땅 뺏길 수도 있어요 😭</li>
+                </ul>
+            </div>
+            <div class="dr-tip">
+                가짜 쿠파가 있을 땐 일부러 천천히 가거나, 코인을 다 쓰고 가는 게 상책입니다!
+            </div>
+        </div>
+
+        <div class="section-center">
+            <h2 class="section-title">🎢 테마가 있는 맵 (난이도 ★★~★★★)</h2>
+        </div>
+
+        <div class="map-card normal">
+            <div class="map-header">
+                <div class="map-title">3. 두근두근 쇼핑몰</div>
+                <div class="difficulty">★★☆☆☆</div>
+            </div>
+            <div class="tag-container">
+                <span class="tag">#쇼핑</span>
+                <span class="tag">#아이템전</span>
+                <span class="tag">#세일타임</span>
+            </div>
+            <div class="desc-box">
+                <p>쇼핑을 좋아하나요? 5턴마다 찾아오는 <span class="key-rule">반값 세일(Flash Sale)</span>을 노리세요!</p>
+                <ul>
+                    <li>비싼 아이템을 싸게 사서 친구들을 이겨보세요.</li>
+                    <li><strong>가격 상승 스티커:</strong> 친구가 물건을 살 때 가격을 2배로 만들어버려요!</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="map-card normal">
+            <div class="map-header">
+                <div class="map-title">4. 웨스턴 랜드</div>
+                <div class="difficulty">★★☆☆☆</div>
+            </div>
+            <div class="tag-container">
+                <span class="tag">#서부시대</span>
+                <span class="tag">#기차여행</span>
+                <span class="tag">#친구소환</span>
+            </div>
+            <div class="desc-box">
+                <p>칙칙폭폭! <span class="key-rule">수염기차 스티머</span>를 타고 서부를 누비세요. 기차에 치이면 처음으로 돌아가니 조심!</p>
+                <ul>
+                    <li>우유 상점에서 친구들을 내 자리로 강제 소환할 수 있어요.</li>
+                    <li>기차가 앞으로 갈지 뒤로 갈지는 아무도 몰라요~</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="map-card normal">
+            <div class="map-header">
+                <div class="map-title">5. 주사위 스피드웨이</div>
+                <div class="difficulty">★★★☆☆</div>
+            </div>
+            <div class="tag-container">
+                <span class="tag">#레이싱</span>
+                <span class="tag">#스피드</span>
+                <span class="tag">#주사위운</span>
+            </div>
+            <div class="desc-box">
+                <p>복잡한 건 싫다! 오직 <span class="key-rule">스피드</span>로 승부하는 레이싱 맵입니다.</p>
+                <ul>
+                    <li>한 바퀴 돌 때마다 코인 보너스를 받아요.</li>
+                    <li><strong>마하 주사위:</strong> 주사위를 4개나 굴려서 엄청 멀리 이동할 수 있어요! 🏎️</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section-center">
+            <h2 class="section-title">🔥 고수의 도전 (난이도 ★★★ 이상)</h2>
+        </div>
+
+        <div class="map-card hard">
+            <div class="map-header">
+                <div class="map-title">6. 굼바 아일랜드</div>
+                <div class="difficulty">★★★☆☆</div>
+            </div>
+            <div class="tag-container">
+                <span class="tag">#화산폭발</span>
+                <span class="tag">#밀물썰물</span>
+                <span class="tag">#우정파괴</span>
+            </div>
+            <div class="desc-box">
+                <p>밀물과 썰물에 따라 길이 생겼다 없어졌다 해요. 친구를 섬에 가둘 수도 있는 무시무시한 곳!</p>
+                <ul>
+                    <li>화산이 폭발하면 황금 굼바나 나쁜 김수한무가 떨어져요.</li>
+                    <li>섬에 갇히면 <strong>집라인</strong>을 타고 탈출하세요!</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="map-card hard">
+            <div class="map-header">
+                <div class="map-title">7. 쿠파의 데인저러스 베이스</div>
+                <div class="difficulty">★★★★★</div>
+            </div>
+            <div class="tag-container">
+                <span class="tag">#최고난이도</span>
+                <span class="tag">#함정주의</span>
+                <span class="tag">#대박찬스</span>
+            </div>
+            <div class="desc-box">
+                <p>가장 어렵고 위험한 쿠파의 기지! 길이 계속 바뀌고 쿠파 함정이 늘어납니다.</p>
+                <ul>
+                    <li><strong>쿠파의 금고:</strong> 비밀번호를 맞추면 그동안 쌓인 보물을 몽땅 가질 수 있어요! 💰</li>
+                    <li>진정한 고수만 도전하세요!</li>
+                </ul>
+            </div>
+            <div class="dr-tip">
+                 몇 수 앞을 내다보는 전략이 필수입니다. '쿠파 레인 스위치'로 길을 바꿔 위험을 피하세요!
+            </div>
+        </div>
+
+        <div class="section-center">
+            <h2 class="section-title">📊 한눈에 비교하기</h2>
+        </div>
+        
+        <table>
+            <thead>
+                <tr>
+                    <th>맵 이름</th>
+                    <th>난이도</th>
+                    <th>특징</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>거대 꽃충이와 과자의 숲</td>
+                    <td>★☆☆☆☆</td>
+                    <td>길 바꾸기 입문용</td>
+                </tr>
+                <tr>
+                    <td>마리오의 레인보우 캐슬</td>
+                    <td>★☆☆☆☆</td>
+                    <td>천국과 지옥 타이밍</td>
+                </tr>
+                <tr>
+                    <td>두근두근 쇼핑몰</td>
+                    <td>★★☆☆☆</td>
+                    <td>아이템 쇼핑 & 세일</td>
+                </tr>
+                <tr>
+                    <td>웨스턴 랜드</td>
+                    <td>★★☆☆☆</td>
+                    <td>기차 & 위치 바꾸기</td>
+                </tr>
+                <tr>
+                    <td>주사위 스피드웨이</td>
+                    <td>★★★☆☆</td>
+                    <td>단순 스피드 레이싱</td>
+                </tr>
+                <tr>
+                    <td>굼바 아일랜드</td>
+                    <td>★★★☆☆</td>
+                    <td>밀물썰물 고립 주의</td>
+                </tr>
+                <tr>
+                    <td>쿠파의 데인저러스 베이스</td>
+                    <td>★★★★★</td>
+                    <td>최고 난이도 & 금고 대박</td>
+                </tr>
+            </tbody>
+        </table>
+
+    </div>
+
+    <footer>
+        <p>Created for TOFT Family | 즐거운 파티 되세요! 🎮</p>
+    </footer>
+
+</body>
+</html>
