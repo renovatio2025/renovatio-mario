@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>슈퍼 마리오 파티 잼버리 - 게임 모드 탐험</title>
+    <link href="https://fonts.googleapis.com/css2?family=Jua&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Jua', 'sans-serif'], },
+                    colors: {
+                        marioRed: '#E60012', marioBlue: '#0060A9',
+                        luigiGreen: '#43B047', peachPink: '#FF9EBB',
+                        coinYellow: '#FFDE00', bowserDark: '#2D2D2D',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body { background-image: radial-gradient(#ffffff 20%, #f0f9ff 20%); background-size: 50px 50px; }
+        .card-hover:hover { transform: translateY(-10px); box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); }
+        /* 링크 밑줄 제거 */
+        a { text-decoration: none; }
+    </style>
+</head>
+<body class="font-sans text-gray-800 antialiased min-h-screen flex flex-col">
+
+    <header class="bg-marioRed text-white py-6 shadow-lg border-b-8 border-yellow-400">
+        <div class="container mx-auto px-4 text-center">
+            <h1 class="text-4xl md:text-6xl mb-2 drop-shadow-md">🍄 슈퍼 마리오 파티 잼버리 ⭐</h1>
+            <p class="text-xl md:text-2xl text-yellow-200">박사님의 잼버리 대백과에 오신 것을 환영합니다!</p>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 py-8 flex-grow">
+        
+        <div class="bg-white rounded-3xl p-6 mb-10 shadow-xl border-4 border-marioBlue max-w-4xl mx-auto text-center relative overflow-hidden">
+            <h2 class="text-3xl text-marioBlue mb-4">🎈 무엇을 도와드릴까요?</h2>
+            <p class="text-xl leading-relaxed">
+                궁금한 내용을 아래 카드에서 선택해 보세요.<br>
+                맵 정보부터 미니게임 공략까지 모두 모아두었습니다!
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl mx-auto">
+
+            <a href="map.html" class="block">
+                <div class="bg-white rounded-3xl overflow-hidden shadow-lg border-b-8 border-marioRed card-hover transition-all duration-300 h-full">
+                    <div class="bg-marioRed p-4 flex justify-between items-center text-white">
+                        <h3 class="text-2xl">🗺️ 보드 맵 대백과</h3>
+                        <span class="text-3xl">⭐</span>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-gray-500 font-bold mb-2">어디서 놀까?</p>
+                        <p class="mb-4 text-lg">
+                            거대 꽃충이 숲부터 쿠파의 기지까지!<br>
+                            <strong>7가지 맵의 특징과 꿀팁</strong>을 확인하세요.
+                        </p>
+                    </div>
+                </div>
+            </a>
+
+            <a href="guide.html" class="block">
+                <div class="bg-white rounded-3xl overflow-hidden shadow-lg border-b-8 border-marioBlue card-hover transition-all duration-300 h-full">
+                    <div class="bg-marioBlue p-4 flex justify-between items-center text-white">
+                        <h3 class="text-2xl">📖 가이드 & 용어</h3>
+                        <span class="text-3xl">💡</span>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-gray-500 font-bold mb-2">게임이 처음이라면?</p>
+                        <p class="mb-4 text-lg">
+                            칸 종류, 특수 장소, 챔피언십 규칙 등<br>
+                            <strong>기초 지식과 용어</strong>를 쉽게 알려드려요.
+                        </p>
+                    </div>
+                </div>
+            </a>
+
+            <a href="minigame.html" class="block">
+                <div class="bg-white rounded-3xl overflow-hidden shadow-lg border-b-8 border-yellow-400 card-hover transition-all duration-300 h-full">
+                    <div class="bg-yellow-400 p-4 flex justify-between items-center text-white">
+                        <h3 class="text-2xl drop-shadow-sm">🏆 미니게임 도감</h3>
+                        <span class="text-3xl">⚓</span>
+                    </div>
+                    <div class="p-6">
+                        <p class="text-gray-500 font-bold mb-2">필승 공략법!</p>
+                        <p class="mb-4 text-lg">
+                            112개 미니게임의 승리 비법!<br>
+                            <strong>검색 기능</strong>으로 원하는 게임을 찾아보세요.
+                        </p>
+                    </div>
+                </div>
+            </a>
+
+            <div class="bg-gray-200 rounded-3xl overflow-hidden shadow-inner border-b-8 border-gray-400 opacity-70">
+                <div class="bg-gray-600 p-4 flex justify-between items-center text-white">
+                    <h3 class="text-2xl">🦖 쿠파 챌린지</h3>
+                    <span class="text-sm border border-white px-2 rounded">준비중</span>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-500 font-bold mb-2">온라인 대결</p>
+                    <p class="mb-4 text-lg text-gray-500">
+                        쿠파 애슬론과 버스터즈 공략은<br>다음에 추가될 예정이에요!
+                    </p>
+                </div>
+            </div>
+
+             <div class="bg-gray-200 rounded-3xl overflow-hidden shadow-inner border-b-8 border-gray-400 opacity-70">
+                <div class="bg-gray-600 p-4 flex justify-between items-center text-white">
+                    <h3 class="text-2xl">👋 체감 파티</h3>
+                    <span class="text-sm border border-white px-2 rounded">준비중</span>
+                </div>
+                <div class="p-6">
+                    <p class="text-gray-500 font-bold mb-2">몸으로 즐기는 액션</p>
+                    <p class="mb-4 text-lg text-gray-500">
+                        조이콘을 활용한 리듬 게임 정보도<br>곧 만날 수 있어요.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <footer class="bg-gray-800 text-white py-6 mt-12 text-center">
+        <p class="text-gray-400 text-sm">Created by Dr. TOFT</p>
+    </footer>
+
+</body>
+</html>
